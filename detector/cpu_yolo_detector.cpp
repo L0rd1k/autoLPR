@@ -107,9 +107,11 @@ std::vector<alpr::PredictedBox> alpr::CPUYoloDetector::postprocess(const std::ve
                 int height = (int)(data[3] * size.height);
                 int left = centerX - width / 2;
                 int top = centerY - height / 2;
-                classIds.push_back(classIdPoint.x);
-                confidences.push_back((float)confidence);
-                boxes.push_back(cv::Rect(left, top, width, height));
+                if(classIdPoint.x == 2) {
+                    classIds.push_back(classIdPoint.x);
+                    confidences.push_back((float)confidence);
+                    boxes.push_back(cv::Rect(left, top, width, height));
+                }
             }
         }
     }

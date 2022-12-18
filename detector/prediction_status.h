@@ -10,6 +10,7 @@ struct PredictionStatus {
     }
     bool found;
     std::vector<cv::Rect> rects;
+    cv::Mat frame;
 };
 
 }  // namespace alpr

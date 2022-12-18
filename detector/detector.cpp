@@ -18,6 +18,7 @@ alpr::PredictionStatus alpr::Detector::detect(const cv::Mat& frame) {
             for(int i = 0; i < 1; i++) {
                 auto rect = predictedBoxes[0].getROI();
                 prediction.rects.push_back(rect);
+                prediction.frame = frame;
                 prediction.found = true;    
             }
             // for(auto& box : predictedBoxes) {

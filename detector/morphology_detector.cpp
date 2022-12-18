@@ -13,6 +13,8 @@ bool compareContourAreas(std::vector<cv::Point>& contour1, std::vector<cv::Point
 }
 
 bool alpr::MorphologyDetector::process(cv::Mat& img) {
+    cv::Rect2d lastTrackedRect_;
+
     if (_detectorResult == nullptr) {
         _detectorResult = std::make_shared<std::future<alpr::PredictionStatus>>(
             std::async(std::launch::async, &alpr::Detector::detect, _detector, img));
@@ -23,14 +25,23 @@ bool alpr::MorphologyDetector::process(cv::Mat& img) {
         auto state = _detectorResult->wait_for(std::chrono::milliseconds(0));
         if (state == std::future_status::ready) {
             prediction = _detectorResult->get();
-            if (!prediction.rects.empty()) {
-                for (auto& boxs : prediction.rects) {
-                    cv::rectangle(img, boxs, cv::Scalar(0, 0, 255), 3);
-                }
-            }
             _detectorResult.reset();
         }
     }
+
+
+    if(prediction.found) {
+        if(_tracker->init(prediction.frame, prediction.rects[0])) {
+            if(_tracker->update(img, lastTrackedRect_)) {
+                lastTrackedRect_ = prediction.rects[0];
+            }
+        }
+    } else {
+        if(_tracker->is_inited() && _tracker->update(img, lastTrackedRect_)) {
+            cv::rectangle(img, lastTrackedRect_, cv::Scalar(0, 0, 255), 3);
+        }
+    }
+
 
     cv::imshow("Result", img);
     cv::waitKey(1);

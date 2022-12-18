@@ -21,7 +21,8 @@ public:
     std::shared_ptr<std::future<alpr::PredictionStatus> > _detectorResult;
     std::shared_ptr<alpr::Detector> _detector;                      
     std::shared_ptr<alpr::Tracker> _tracker;
-    // cv::Rect2d _lastRect;
+    
+    
     cv::Mat resized_img;
 };
 
