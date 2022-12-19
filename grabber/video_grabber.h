@@ -4,7 +4,7 @@
 
 #include "opencv2/opencv.hpp"
 
-#include "detector/morphology_detector.h"
+#include "handlers/handler.h"
 #include "utils/timer.h"
 
 namespace alpr {
@@ -16,7 +16,7 @@ public:
 
 private:
     void readLoop();
-    alpr::MorphologyDetector detector_;
+    alpr::Handler handler_;
     std::string streamPath_;
     cv::VideoCapture cap_;
 };

@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "cpu_yolo_detector.h"
+#include "yolo/cpu_yolo_detector.h"
 #include "prediction_status.h"
 
 namespace alpr {

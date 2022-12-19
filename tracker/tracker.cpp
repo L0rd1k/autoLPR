@@ -24,9 +24,7 @@ bool alpr::Tracker::create(const alpr::TrackerType type) {
 bool alpr::Tracker::init(cv::Mat& frame, const cv::Rect2d bbox) {
     if (is_inited()) {
         tracker_->clear();
-        if (create(type_)) {
-            std::cout << "Created" << std::endl;
-        }
+        create(type_);
     }
     bbox_ = bbox;
     if (tracker_->init(frame, bbox_)) {

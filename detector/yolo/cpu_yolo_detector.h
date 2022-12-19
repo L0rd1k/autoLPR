@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "detector_status.h"
+#include "utils/img_processing.h"
 
 namespace alpr {
 
@@ -22,7 +23,6 @@ public:
     virtual ~CPUYoloDetector();
     bool init();
     bool predict(const cv::Mat& img, std::vector<alpr::PredictedBox>& predictions);
-    cv::Rect fixBound(cv::Rect r, cv::Size imageSize);
 
     void setModelCfgPath(const std::string file);
     const std::string getModelCfgPath();

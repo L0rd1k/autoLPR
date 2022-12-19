@@ -15,10 +15,13 @@ endif()
 set(SOURCES
     main.cpp
     grabber/video_grabber.cpp
-    detector/morphology_detector.cpp
-    detector/cpu_yolo_detector.cpp
+    handlers/handler.cpp
+    detector/yolo/cpu_yolo_detector.cpp
     detector/detector.cpp
     tracker/tracker.cpp
+    recognizer/recognizer.cpp
+    filtering/kalman/kalman_filter.cpp
+    filtering/kalman/kalman_rect_tracker.cpp
 )
 
 add_executable (${PROJECT_NAME} ${SOURCES})
