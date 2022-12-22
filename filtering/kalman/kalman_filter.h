@@ -7,8 +7,6 @@ namespace alpr {
 
 class KalmanFilter {
 public:
-    KalmanFilter();
-    virtual ~KalmanFilter();
     virtual void init() = 0;
     virtual cv::Rect update(cv::Rect rect) = 0;
 protected:

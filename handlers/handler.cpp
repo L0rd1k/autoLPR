@@ -1,8 +1,10 @@
 #include "handler.h"
 
 alpr::Handler::Handler() {
-    _detector = std::make_shared<alpr::Detector>();
-    _tracker = std::make_shared<alpr::Tracker>();
+    _detector = std::make_shared<alpr::YoloDetector>();
+    _tracker = std::make_shared<alpr::SingleTracker>();
+    // _tracker = std::make_shared<alpr::MultiTracker>();
+
     _kalman = std::make_shared<alpr::KalmanRectTracker>(6, 4, 0);
     _tracker->create(alpr::TrackerType::MEDIANFLOW);
     _kalman->init();
@@ -13,7 +15,7 @@ bool alpr::Handler::process(cv::Mat& img) {
 
     if (_detectorResult == nullptr) {
         _detectorResult = std::make_shared<std::future<alpr::PredictionStatus>>(
-            std::async(std::launch::async, &alpr::Detector::detect, _detector, img));
+            std::async(std::launch::async, &alpr::DetectorBase::detect, _detector, img));
     }
 
     alpr::PredictionStatus prediction;
@@ -25,29 +27,50 @@ bool alpr::Handler::process(cv::Mat& img) {
         }
     }
 
-    if(prediction.found) {
-        if(_tracker->init(prediction.frame, prediction.rects[0])) {
-            if(_tracker->update(img, lastTrackedRect_)) {
+    if (prediction.found) {
+        /*** MULTITRACK TRACKER **/
+        // if(_tracker->init(prediction.frame, prediction.rects)) {
+        //      if(_tracker->update(img, prediction.rects)) {
+        //          lastTrackedRect_ = prediction.rects;
+        //          for(auto boxs : lastTrackedRect_) {
+        //              cv::rectangle(img, boxs, cv::Scalar(0, 0, 255), 3);
+        //          }
+        //      }
+        // }
+
+        /*** SINGLE TRACKER **/
+        if (_tracker->init(prediction.frame, prediction.rects[0])) {
+            if (_tracker->update(img, lastTrackedRect_)) {
                 lastTrackedRect_ = prediction.rects[0];
+                // cv::rectangle(img, lastTrackedRect_, cv::Scalar(255, 255, 255), 3);
             }
         }
     } else {
-        if(_tracker->is_inited()) {
-            if(_tracker->update(img, lastTrackedRect_)) {
+        /*** MULTITRACK TRACKER **/
+        // if(_tracker->is_inited()) {
+        //     if(_tracker->update(img, lastTrackedRect_)) {
+        //          for(auto boxs : lastTrackedRect_) {
+        //              cv::rectangle(img, boxs, cv::Scalar(255, 255, 255), 3);
+        //          }
+        //     }
+        // }
+
+        /*** SINGLE TRACKER **/
+        if (_tracker->is_inited()) {
+            if (_tracker->update(img, lastTrackedRect_)) {
                 cv::Rect newRect = _kalman->update(lastTrackedRect_);
-                cv::rectangle(img, lastTrackedRect_, cv::Scalar(0, 0, 255), 3);
+                // cv::rectangle(img, lastTrackedRect_, cv::Scalar(0, 0, 255), 3);
                 cv::rectangle(img, newRect, cv::Scalar(255, 0, 0), 3);
             }
         }
     }
 
-    if(!lastTrackedRect_.empty() && !img.empty()) {
+    if (!lastTrackedRect_.empty() && !img.empty()) {
         lastTrackedRect_ = fixBound(lastTrackedRect_, img.size());
         _recognizer->process(img, lastTrackedRect_);
     }
-    
+
     cv::imshow("Result", img);
     cv::waitKey(1);
     return true;
-
 }

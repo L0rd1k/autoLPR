@@ -17,8 +17,10 @@ set(SOURCES
     grabber/video_grabber.cpp
     handlers/handler.cpp
     detector/yolo/cpu_yolo_detector.cpp
-    detector/detector.cpp
+    detector/yolo/yolo_detector.cpp
     tracker/tracker.cpp
+    tracker/multi_tracker.cpp
+    tracker/single_tracker.cpp
     recognizer/recognizer.cpp
     filtering/kalman/kalman_filter.cpp
     filtering/kalman/kalman_rect_tracker.cpp

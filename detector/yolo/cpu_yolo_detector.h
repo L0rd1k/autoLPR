@@ -32,8 +32,6 @@ public:
 private:
     std::string cfgFile_;
     std::string weightsFile_;
-
-
     
 protected:
     bool isExist(const std::string& path);

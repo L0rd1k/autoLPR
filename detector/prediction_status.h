@@ -9,7 +9,7 @@ struct PredictionStatus {
         : found(false) {
     }
     bool found;
-    std::vector<cv::Rect> rects;
+    std::vector<cv::Rect2d> rects;
     cv::Mat frame;
 };
 
