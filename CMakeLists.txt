@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.2.0)
 
 project(CarPlate)
 
@@ -12,11 +12,17 @@ if (NOT ${OPENCV_FOUND})
     return()
 endif()
 
+add_subdirectory(./3rdParty/darknet)
+
+include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(./3rdParty/darknet/include)
+
 set(SOURCES
     main.cpp
     grabber/video_grabber.cpp
     handlers/handler.cpp
     detector/yolo/cpu_yolo_detector.cpp
+    detector/yolo/gpu_yolo_detector.cpp
     detector/yolo/yolo_detector.cpp
     tracker/tracker.cpp
     tracker/multi_tracker.cpp
@@ -24,9 +30,12 @@ set(SOURCES
     recognizer/recognizer.cpp
     filtering/kalman/kalman_filter.cpp
     filtering/kalman/kalman_rect_tracker.cpp
+
+    tracker/deepsort/sort.cpp
+    tracker/deepsort/tracker_manager.cpp
+    tracker/deepsort/tracker_kalman.cpp
 )
 
 add_executable (${PROJECT_NAME} ${SOURCES})
-
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} pthread)
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} dark pthread)
 

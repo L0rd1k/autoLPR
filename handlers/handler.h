@@ -23,6 +23,8 @@ public:
     bool process(cv::Mat& img);
 
     std::shared_ptr<std::future<alpr::PredictionStatus> > _detectorResult;
+    // alpr::PredictionStatus _detectorResult;
+
     std::shared_ptr<alpr::DetectorBase> _detector;
     std::shared_ptr<alpr::SingleTracker> _tracker;
     // std::shared_ptr<alpr::MultiTracker> _tracker;

@@ -10,6 +10,7 @@ enum class TrackerType {
     BOOSTING = 0,
     KCF = 1,
     MEDIANFLOW = 2,
+    DEEPSORT = 3,
 };
 
 class Tracker {

@@ -18,6 +18,11 @@ bool alpr::SingleTracker::create(const alpr::TrackerType type) {
     return true;
 }
 
+bool alpr::SingleTracker::clear() {
+   tracker_->clear();
+   return true; 
+}
+
 bool alpr::SingleTracker::init(cv::Mat& frame, const cv::Rect2d bbox) {
     if (is_inited()) {
         tracker_->clear();
