@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.2.0)
 
 project(CarPlate)
 
+set(CMAKE_CXX_STANDARD 17)
+
 include_directories(.)
 include_directories(./detector)
 
@@ -12,9 +14,14 @@ if (NOT ${OPENCV_FOUND})
     return()
 endif()
 
+set(Torch_DIR "/usr/local/libtorch_1.9.0_cpu/share/cmake/Torch")
+find_package(Torch REQUIRED)
+
+
 add_subdirectory(./3rdParty/darknet)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${TORCH_INCLUDE_DIRS})
 include_directories(./3rdParty/darknet/include)
 
 set(SOURCES
@@ -37,5 +44,5 @@ set(SOURCES
 )
 
 add_executable (${PROJECT_NAME} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} dark pthread)
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${TORCH_LIBRARIES} dark pthread)
 

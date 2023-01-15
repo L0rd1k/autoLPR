@@ -10,14 +10,18 @@
 
 namespace alpr {
 
+template<typename TrackData>
+class TrackerManager;
+
 class TrackerData;
+
 class Sort {
 public:
-    explicit Sort(const std::array<uint64_t, 2> &d);
+    explicit Sort(const std::array<int64_t, 2> &sz);
     ~Sort();
-    std::vector<alpr::TrackerState> update(const std::vector<cv::Rect2f> &predictions);
+    std::vector<alpr::TrackerState> update(const std::vector<cv::Rect2f> &pred);
 private:
-    using Manager = TrackerManager<alpr::TrackerData>;
+    using Manager = alpr::TrackerManager<alpr::TrackerData>;
     std::vector<alpr::TrackerData> data_;
     std::unique_ptr<Manager> manager_;
 

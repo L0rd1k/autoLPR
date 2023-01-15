@@ -26,6 +26,11 @@ alpr::TrackerKalman::TrackerKalman(cv::Rect2f box) {
     init(box);
 }
 
+alpr::KalmanState alpr::TrackerKalman::getState() const {
+    return k_state_;
+}
+
+
 void alpr::TrackerKalman::init(cv::Rect2f box) {
     kalman_.statePost.at<float>(0, 0) = box.x + box.width / 2;
     kalman_.statePost.at<float>(1, 0) = box.y + box.height / 2;
