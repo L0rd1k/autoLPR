@@ -3,37 +3,23 @@
 alpr::Handler::Handler() {
     _detector = std::make_shared<alpr::YoloDetector>();
     _tracker = std::make_shared<alpr::SingleTracker>();
-    // _tracker = std::make_shared<alpr::MultiTracker>();
+
+    {
+        alpr::Size<int64_t> size(1920, 1080);
+        _deepTracker = std::make_shared<alpr::DeepSort>(size);
+    }
 
     _kalman = std::make_shared<alpr::KalmanRectTracker>(6, 4, 0);
     _tracker->create(alpr::TrackerType::MEDIANFLOW);
     _kalman->init();
 }
 
-// bool alpr::Handler::process(cv::Mat& img) {
-//     std::vector<cv::Rect2d> lastTrackedRect_;
-
-//     _detectorResult = _detector->detect(img);
-//     if (_detectorResult.found) {
-//         lastTrackedRect_ = _detectorResult.rects;
-//         for (auto boxs : lastTrackedRect_) {
-//             cv::rectangle(img, boxs, cv::Scalar(0, 0, 255), 3);
-//         }
-//     }
-
-//     cv::imshow("Result", img);
-//     cv::waitKey(1);
-//     return true;
-// }
-
 bool alpr::Handler::process(cv::Mat& img) {
     std::vector<cv::Rect2d> lastTrackedRect_;
-
     if (_detectorResult == nullptr) {
         _detectorResult = std::make_shared<std::future<alpr::PredictionStatus>>(
             std::async(std::launch::async, &alpr::DetectorBase::detect, _detector, img));
     }
-
     alpr::PredictionStatus prediction;
     if (_detectorResult->valid() == true) {
         auto state = _detectorResult->wait_for(std::chrono::milliseconds(0));
@@ -42,15 +28,20 @@ bool alpr::Handler::process(cv::Mat& img) {
             _detectorResult.reset();
         }
     }
-
     if (prediction.found) {
+        std::cout << "Prediction rect size: " << prediction.rects.size() << std::endl;
+        _deepTracker->update(prediction.rects, img);
+        for (auto boxs : prediction.rects) {
+            cv::rectangle(img, boxs, cv::Scalar(0, 0, 255), 3);
+        }
+
         /*** MULTITRACK TRACKER **/
         // if(_tracker->init(prediction.frame, prediction.rects)) {
         //      if(_tracker->update(img, prediction.rects)) {
-                 lastTrackedRect_ = prediction.rects;
-                 for(auto boxs : lastTrackedRect_) {
-                     cv::rectangle(img, boxs, cv::Scalar(0, 0, 255), 3);
-                }
+        //          lastTrackedRect_ = prediction.rects;
+        //          for(auto boxs : lastTrackedRect_) {
+        //              cv::rectangle(img, boxs, cv::Scalar(0, 0, 255), 3);
+        //          }
         //      }
         // }
 

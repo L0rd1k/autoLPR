@@ -38,9 +38,12 @@ set(SOURCES
     filtering/kalman/kalman_filter.cpp
     filtering/kalman/kalman_rect_tracker.cpp
 
+
+
     tracker/deepsort/sort.cpp
-    tracker/deepsort/tracker_manager.cpp
+    tracker/deepsort/deepsort.cpp
     tracker/deepsort/tracker_kalman.cpp
+    tracker/deepsort/net.cpp
 )
 
 add_executable (${PROJECT_NAME} ${SOURCES})
